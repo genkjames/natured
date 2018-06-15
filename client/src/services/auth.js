@@ -11,6 +11,18 @@ function saveToken(respBody) {
   return user;
 }
 
+function checkToken() {
+  return new Promise((resolve, reject) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      const user = jwtDecode(token);
+      resolve(user);
+    }
+
+    reject();
+  })
+}
+
 function logout() {
   localStorage.removeItem('authToken');
 }
@@ -41,8 +53,9 @@ function register(creds) {
   .then(checkStatus).then(saveToken)
 }
 
-export {
+export default {
   login,
   register,
-  logout
+  logout,
+  checkToken
 }

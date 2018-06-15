@@ -1,5 +1,5 @@
 import React from 'react';
-import pic from '../../leaf.png';
+import pic from '../../img/leaf.png';
 
 function ProfilePicture(props) {
   const img = {

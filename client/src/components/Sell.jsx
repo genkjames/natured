@@ -10,7 +10,7 @@ class Sell extends Component {
   }
 
   componentDidMount() {
-    this.isLoggedIn();
+    this.props.isLoggedIn();
   }
 
   render() {

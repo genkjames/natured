@@ -1,6 +1,6 @@
 import React from 'react';
-import './App.css';
-import Banner from './components/Banner';
+import '../App.css';
+import Banner from '../components/Banner';
 
 function  Apply (props) {
   return(

@@ -7,7 +7,7 @@ import Categories from './components/categories/Categories';
 import About from './components/About';
 import Contact from './components/Contact';
 import FAQ from './components/FAQ';
-import Apply from './Apply';
+import Apply from './components/Apply';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Cart from './components/cart/Cart';
@@ -15,7 +15,9 @@ import Sell from './components/Sell';
 import Products from './components/products/Products';
 import ProductsView from './components/products/ProductsView';
 import Footer from './components/Footer';
-import { login, register, logout } from './services/auth';
+import { getProducts } from './services/products';
+import { getCategories, getStates } from './services/details';
+import Auth from './services/auth';
 
 class App extends Component {
   constructor(props) {
@@ -41,16 +43,13 @@ class App extends Component {
     this.createProduct = this.createProduct.bind(this);
     this.deleteProduct = this.deleteProduct.bind(this);
     this.updateProduct = this.updateProduct.bind(this);
+    this.isLoggedIn = this.isLoggedIn.bind(this);
   }
 
   // Fetch calls to api
 
   fetchProducts() {
-    fetch('/api/products')
-    .then(resp => {
-      if (!resp.ok) throw new Error('There was an error');
-      return resp.json()
-    })
+    getProducts()
     .then(respBody => {
       this.setState({
         products: respBody.contents
@@ -59,11 +58,7 @@ class App extends Component {
   }
 
   fetchCategories() {
-    fetch('/api/categories')
-    .then(resp => {
-      if (!resp.ok) throw new Error('There was an error');
-      return resp.json()
-    })
+    getCategories()
     .then(respBody => {
       this.setState({
         categories: respBody.contents
@@ -72,11 +67,7 @@ class App extends Component {
   }
 
   fetchStates() {
-    fetch('/api/states')
-    .then(resp => {
-      if (!resp.ok) throw new Error('There was an error');
-      return resp.json()
-    })
+    getStates()
     .then(respBody => {
       this.setState({
         states: respBody.contents
@@ -298,9 +289,9 @@ class App extends Component {
   }
 
   handleLogin(creds) {
-    login(creds)
+    Auth.login(creds)
     .then(user => {
-      this.setState({user})
+      this.setState({user});
       this.fetchUserProducts();
       this.updateCart();
     })
@@ -310,16 +301,26 @@ class App extends Component {
   }
 
   handleRegister(creds) {
-    register(creds)
+    Auth.register(creds)
     .then(user => this.setState({user}))
   }
 
   handleLogout() {
-    logout();
+    Auth.logout();
     this.setState({
       user: null
     })
     this.props.history.push('/categories');
+  }
+
+  isLoggedIn() {
+    Auth.checkToken()
+    .then(user => {
+      this.setState({user});
+      this.fetchUserProducts();
+      this.updateCart();
+    })
+    .catch(err => this.props.history.push('/login'));
   }
 
   componentDidMount() {
@@ -327,6 +328,7 @@ class App extends Component {
     this.fetchCategories();
     this.fetchRecommended();
     this.fetchStates();
+    this.isLoggedIn();
   }
 
   render() {
@@ -420,6 +422,7 @@ class App extends Component {
                 states={this.state.states}
                 categories={this.state.categories}
                 user={this.state.user}
+                isLoggedIn={this.isLoggedIn}
                 onSubmit={this.createProduct}
                 onDelete={this.deleteProduct}
                 onEdit={this.updateProduct}
