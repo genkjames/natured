@@ -32,7 +32,8 @@ class App extends Component {
       total: 0,
       recommended: [],
       user: null,
-      registerError: false
+      registerError: false,
+      loggedInError: false
     }
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
@@ -328,7 +329,7 @@ class App extends Component {
       this.fetchUserProducts();
       this.updateCart();
     })
-    .catch(err => this.props.history.push('/login'));
+    .catch(err => this.setState({loggedInError: true}));
   }
 
   componentDidMount() {
@@ -436,6 +437,7 @@ class App extends Component {
                 onDelete={this.deleteProduct}
                 onEdit={this.updateProduct}
                 history={history}
+                error={this.state.loggedInError}
               />)}
             />
             <Route path="/:id" render={() => (<Footer/>)} />

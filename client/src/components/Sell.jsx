@@ -3,14 +3,15 @@ import ProfileSideMenu from './profile/ProfileSideMenu';
 import ProductDashboard from './profile/ProductDashboard';
 
 class Sell extends Component {
-  isLoggedIn() {
-    if(this.props.user === null) {
-      this.props.history.push('/login');
-    }
-  }
 
   componentDidMount() {
-    this.props.isLoggedIn();
+    this.props.isLoggedIn()
+  }
+
+  componentDidUpdate() {
+    if (this.props.error === true) {
+      this.props.history.push('/login');
+    }
   }
 
   render() {
