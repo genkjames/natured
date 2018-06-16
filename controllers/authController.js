@@ -3,9 +3,6 @@ const authDb = require('../models/auth');
 
 function register(req, res) {
   authDb.register(req.body)
-  .catch(err => res.status(401).json({
-    message: err.message
-  }))
   .then(data => tokenService.makeToken({
     id: data.id,
     username: data.username,
@@ -15,15 +12,14 @@ function register(req, res) {
     res.json({
       token
     })
-  });
+  })
+  .catch(err => res.json({
+    message: 'err.message'
+  }));
 }
 
 function login(req, res) {
   authDb.login(req.body)
-  .catch(err => res.status(401).json({
-    status: 'Error',
-    message: 'Email or password is incorrect'
-  }))
   .then(data => tokenService.makeToken({
     id: data.id,
     username: data.username,
@@ -34,6 +30,10 @@ function login(req, res) {
       token
     })
   })
+  .catch(err => res.status(401).json({
+    status: 'Error',
+    message: 'Email or password is incorrect'
+  }))
 }
 
 function receiveToken(req, res, next) {
@@ -57,10 +57,6 @@ function restrict(req, res, next) {
 
 function updateUser(req, res, next) {
   authDb.updateUser(req.body)
-  .catch(err => res.status(401).json({
-    status: 'Error',
-    message: 'Username and email wer\'e not updated'
-  }))
   .then(data => tokenService.makeToken({
     id: data.id,
     username: data.username,
@@ -71,6 +67,10 @@ function updateUser(req, res, next) {
       token
     })
   })
+  .catch(err => res.status(401).json({
+    status: 'Error',
+    message: 'Username and email wer\'e not updated'
+  }))
 }
 
 module.exports = {

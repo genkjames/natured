@@ -31,7 +31,8 @@ class App extends Component {
       states: [],
       total: 0,
       recommended: [],
-      user: null
+      user: null,
+      registerError: false
     }
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
@@ -302,7 +303,14 @@ class App extends Component {
 
   handleRegister(creds) {
     Auth.register(creds)
-    .then(user => this.setState({user}))
+    .then(user => {
+      this.setState({
+        user,
+        registerError: false
+      })
+      this.props.history.push('/categories');
+    })
+    .catch(err => this.setState({registerError: true}));
   }
 
   handleLogout() {
@@ -399,6 +407,7 @@ class App extends Component {
               <Register
                 history={history}
                 onSubmit={this.handleRegister}
+                error={this.state.registerError}
               />)}
             />
             <Route

@@ -47,6 +47,11 @@ button {
   cursor: pointer;
 }
 
+.error {
+  color: red;
+  text-align: center;
+}
+
 /* Landing page */
 
 .landing-img {

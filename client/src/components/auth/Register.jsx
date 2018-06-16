@@ -25,10 +25,10 @@ export default class Signup extends Component {
     e.preventDefault();
     this.props.onSubmit(this.state);
     this.setState({
+      username: '',
       email: '',
       password: ''
     })
-    this.props.history.push('/categories');
   }
 
   render() {
@@ -41,6 +41,7 @@ export default class Signup extends Component {
       <div className="login menu-links-padding">
       <h1>Register for an Account</h1>
       <p>Already have an account? Please click <a href="/register">here<br/> to login instead.</a></p>
+      {this.props.error && <p className="error">Email is already registered</p>}
       <form onSubmit={this.handleSubmit}>
         <div>
           <label htmlFor="username">Username</label>
