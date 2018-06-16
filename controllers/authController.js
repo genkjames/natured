@@ -30,9 +30,9 @@ function login(req, res) {
       token
     })
   })
-  .catch(err => res.status(401).json({
+  .catch(err => res.json({
     status: 'Error',
-    message: 'Email or password is incorrect'
+    message: 'Email and/or password is incorrect'
   }))
 }
 

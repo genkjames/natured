@@ -29,7 +29,6 @@ export default class Login extends Component {
       email: '',
       password: ''
     })
-    this.props.history.push('/categories');
   }
 
   render() {
@@ -43,6 +42,7 @@ export default class Login extends Component {
       <h1>Login</h1>
       <p>Need to create a profile? Please click <a href="/register">here to register.</a></p>
        <br/>
+       {this.props.error && <p className="error">Invalid username and/or password</p>}
         <form onSubmit={this.handleSubmit}>
           <div>
             <label>Email</label>

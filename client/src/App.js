@@ -33,6 +33,7 @@ class App extends Component {
       recommended: [],
       user: null,
       registerError: false,
+      loginError: false,
       loggedInError: false
     }
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -293,13 +294,15 @@ class App extends Component {
   handleLogin(creds) {
     Auth.login(creds)
     .then(user => {
-      this.setState({user});
+      this.setState({
+        user,
+        loggedInError: false
+      });
       this.fetchUserProducts();
       this.updateCart();
+      this.props.history.push('/categories');
     })
-    .catch(err => {
-      console.log('err');
-    })
+    .catch(err => this.setState({loginError: true}));
   }
 
   handleRegister(creds) {
@@ -307,7 +310,8 @@ class App extends Component {
     .then(user => {
       this.setState({
         user,
-        registerError: false
+        registerError: false,
+        loggedInError: false
       })
       this.props.history.push('/categories');
     })
@@ -402,6 +406,7 @@ class App extends Component {
                 user={this.state.user}
                 history={history}
                 onSubmit={this.handleLogin}
+                error={this.state.loginError}
               />)}
             />
             <Route path="/register" render={({ history }) => (
