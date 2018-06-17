@@ -143,20 +143,7 @@ class App extends Component {
   }
 
   updateProductAfterCheckout(product) {
-    const options = {
-      method: 'PUT',
-      body: JSON.stringify(product),
-      headers: {
-        'content-type': 'application/json'
-      }
-    }
-    const userId = this.state.user.id;
-    const productId = product.product_id;
-    fetch(`/api/cart/${userId}/update/${productId}`, options)
-    .then(resp => {
-      if (!resp.ok) throw new Error('There was an error');
-      return resp.json();
-    })
+    ProductsServices.Checkout(product, this.state.user.id)
     .then(() => {
       this.deleteFromCart(product.id);
       this.fetchProducts();
@@ -165,19 +152,7 @@ class App extends Component {
   }
 
   createProduct(product) {
-    const options = {
-      method: 'POST',
-      body: JSON.stringify(product),
-      headers: {
-        'content-type': 'application/json'
-      }
-    }
-
-    fetch('api/products', options)
-    .then(resp => {
-      if (!resp.ok) throw new Error('There was an error');
-      return resp.json();
-    })
+    ProductsServices.Create(product)
     .then(respBody => {
       this.fetchProducts();
       this.fetchUserProducts();
@@ -185,19 +160,7 @@ class App extends Component {
   }
 
   updateProduct(product) {
-    const options = {
-      method: 'PUT',
-      body: JSON.stringify(product),
-      headers: {
-        'content-type': 'application/json'
-      }
-    }
-
-    fetch(`/api/products/${product.id}`, options)
-    .then(resp => {
-      if (!resp.ok) throw new Error('There was an error');
-      return resp.json()
-    })
+    ProductsServices.Update(product)
     .then(respBody => {
       this.fetchProducts();
       this.fetchUserProducts();
@@ -206,11 +169,7 @@ class App extends Component {
   }
 
   deleteProduct(id) {
-    fetch(`/api/products/${id}`, {method: 'DELETE'})
-    .then(resp => {
-      if (!resp.ok) throw new Error('There was an error');
-      return resp.json()
-    })
+    ProductsServices.Delete(id)
     .then(() => {
       this.fetchProducts();
       this.fetchUserProducts();
