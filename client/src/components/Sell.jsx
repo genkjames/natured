@@ -5,7 +5,8 @@ import ProductDashboard from './profile/ProductDashboard';
 class Sell extends Component {
 
   componentDidMount() {
-    this.props.isLoggedIn()
+    this.props.isLoggedIn();
+    this.props.errorStatus(false, false);
   }
 
   componentDidUpdate() {

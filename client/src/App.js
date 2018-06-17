@@ -48,6 +48,7 @@ class App extends Component {
     this.deleteProduct = this.deleteProduct.bind(this);
     this.updateProduct = this.updateProduct.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
+    this.changeErrorStatus = this.changeErrorStatus.bind(this);
   }
 
   // Fetch calls to api
@@ -204,6 +205,13 @@ class App extends Component {
     return this.state.categories[index];
   }
 
+  changeErrorStatus(registerError, loginError) {
+    this.setState({
+      registerError,
+      loginError
+    })
+  }
+
   handleLogin(creds) {
     Auth.login(creds)
     .then(user => {
@@ -211,6 +219,7 @@ class App extends Component {
         user,
         loggedInError: false
       });
+      this.changeErrorStatus(false, false);
       this.fetchUserProducts();
       this.updateCart();
       this.props.history.push('/categories');
@@ -223,9 +232,9 @@ class App extends Component {
     .then(user => {
       this.setState({
         user,
-        registerError: false,
         loggedInError: false
-      })
+      });
+      this.changeErrorStatus(false, false);
       this.props.history.push('/categories');
     })
     .catch(err => this.setState({registerError: true}));
@@ -277,7 +286,10 @@ class App extends Component {
                 exact
                 path="/categories"
                 render={() => (
-                  <Categories categories={this.state.categories}/>
+                  <Categories
+                    categories={this.state.categories}
+                    errorStatus={this.changeErrorStatus}
+                  />
                 )}
               />
               <Route
@@ -289,6 +301,7 @@ class App extends Component {
                     category={this.selectCategory(match.params.activity)}
                     products={this.state.products}
                     view={this.singleView}
+                    errorStatus={this.changeErrorStatus}
                   />
                 )}
               />
@@ -304,16 +317,25 @@ class App extends Component {
                 )} />
             </Switch>
             <Route path="/all" render={({ match }) => (
-                <Products
+              <Products
                 match={ match }
                 viewAll={this.state.products}
                 category={this.state.categories}
+                errorStatus={this.changeErrorStatus}
               />)}
             />
-            <Route path="/about" render={() => (<About/>)} />
-            <Route path="/contact" render={() => (<Contact/>)} />
-            <Route path="/faq" render={() => (<FAQ/>)} />
-            <Route path="/apply" render={() => (<Apply/>)} />
+            <Route path="/about" render={() => (
+              <About errorStatus={this.changeErrorStatus} />
+            )} />
+            <Route path="/contact" render={() => (
+              <Contact errorStatus={this.changeErrorStatus} />
+            )} />
+            <Route path="/faq" render={() => (
+              <FAQ errorStatus={this.changeErrorStatus}/>
+            )} />
+            <Route path="/apply" render={() => (
+              <Apply errorStatus={this.changeErrorStatus} />
+            )} />
             <Route path="/login" render={({ history }) => (
               <Login
                 user={this.state.user}
@@ -341,6 +363,7 @@ class App extends Component {
                   onUpdate={this.handleUpdate}
                   history={history}
                   user={this.props.user}
+                  errorStatus={this.changeErrorStatus}
                 />
               )}
             />
@@ -356,6 +379,7 @@ class App extends Component {
                 onEdit={this.updateProduct}
                 history={history}
                 error={this.state.loggedInError}
+                errorStatus={this.changeErrorStatus}
               />)}
             />
             <Route path="/:id" render={() => (<Footer/>)} />
