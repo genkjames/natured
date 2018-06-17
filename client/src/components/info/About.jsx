@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import '../App.css';
-import Banner from './Banner';
+import '../../App.css';
+import Banner from '../Banner';
 import { Link } from 'react-router-dom';
 
 class About extends Component {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import ProfileSideMenu from './profile/ProfileSideMenu';
-import ProductDashboard from './profile/ProductDashboard';
+import ProfileSideMenu from './ProfileSideMenu';
+import ProductDashboard from './ProductDashboard';
 
 class Sell extends Component {
 
