@@ -4,10 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 import Landing from './components/Landing';
 import Nav from './components/Nav';
 import Categories from './components/categories/Categories';
-import About from './components/info/About';
-import Contact from './components/info/Contact';
-import FAQ from './components/info/FAQ';
-import Apply from './components/info/Apply';
+import Info from './components/info/Routes';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Cart from './components/cart/Cart';
@@ -324,18 +321,7 @@ class App extends Component {
                 errorStatus={this.changeErrorStatus}
               />)}
             />
-            <Route path="/about" render={() => (
-              <About errorStatus={this.changeErrorStatus} />
-            )} />
-            <Route path="/contact" render={() => (
-              <Contact errorStatus={this.changeErrorStatus} />
-            )} />
-            <Route path="/faq" render={() => (
-              <FAQ errorStatus={this.changeErrorStatus}/>
-            )} />
-            <Route path="/apply" render={() => (
-              <Apply errorStatus={this.changeErrorStatus} />
-            )} />
+            <Info errorStatus={this.changeErrorStatus} />
             <Route path="/login" render={({ history }) => (
               <Login
                 user={this.state.user}
