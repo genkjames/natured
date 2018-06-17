@@ -14,7 +14,7 @@ function getStates() {
   })
 }
 
-export {
+export default {
   getCategories,
   getStates
 }

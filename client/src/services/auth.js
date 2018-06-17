@@ -18,7 +18,6 @@ function checkToken() {
       const user = jwtDecode(token);
       resolve(user);
     }
-
     reject();
   })
 }

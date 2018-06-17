@@ -15,8 +15,9 @@ import Sell from './components/Sell';
 import Products from './components/products/Products';
 import ProductsView from './components/products/ProductsView';
 import Footer from './components/Footer';
-import { getProducts } from './services/products';
-import { getCategories, getStates } from './services/details';
+import ProductsServices from './services/products';
+import CartServices from './services/cart';
+import Details from './services/details';
 import Auth from './services/auth';
 
 class App extends Component {
@@ -52,7 +53,7 @@ class App extends Component {
   // Fetch calls to api
 
   fetchProducts() {
-    getProducts()
+    ProductsServices.All()
     .then(respBody => {
       this.setState({
         products: respBody.contents
@@ -61,7 +62,7 @@ class App extends Component {
   }
 
   fetchCategories() {
-    getCategories()
+    Details.getCategories()
     .then(respBody => {
       this.setState({
         categories: respBody.contents
@@ -70,7 +71,7 @@ class App extends Component {
   }
 
   fetchStates() {
-    getStates()
+    Details.getStates()
     .then(respBody => {
       this.setState({
         states: respBody.contents
@@ -79,11 +80,7 @@ class App extends Component {
   }
 
   fetchCartItems() {
-    fetch(`/api/cart/${this.state.user.id}`)
-    .then(resp => {
-      if (!resp.ok) throw new Error('There was an error');
-      return resp.json();
-    })
+    CartServices.Items(this.state.user.id)
     .then(data => {
       this.setState({
         cart: data.contents
@@ -92,11 +89,7 @@ class App extends Component {
   }
 
   fetchOrderTotal() {
-    fetch(`/api/cart/total/${this.state.user.id}`)
-    .then(resp => {
-      if (!resp.ok) throw new Error('There was an error');
-      return resp.json();
-    })
+    CartServices.OrderTotal(this.state.user.id)
     .then(data => {
       let sum = data.contents[0].sum;
       if(sum === null) {
@@ -109,11 +102,7 @@ class App extends Component {
   }
 
   fetchRecommended() {
-    fetch('/api/products/recommended')
-    .then(resp => {
-      if (!resp.ok) throw new Error('There was an error');
-      return resp.json()
-    })
+    ProductsServices.Recommended()
     .then(respBody => {
       this.setState({
         recommended: respBody.contents
@@ -122,11 +111,7 @@ class App extends Component {
   }
 
   fetchUserProducts() {
-    fetch(`/api/products/user/${this.state.user.id}`)
-    .then(resp => {
-      if (!resp.ok) throw new Error('There was an error');
-      return resp.json()
-    })
+    ProductsServices.User(this.state.user.id)
     .then(respBody => {
       this.setState({
         userProducts: respBody.contents
@@ -137,52 +122,21 @@ class App extends Component {
   // crud operations
 
   addToCart(info) {
-    const options = {
-      method: 'POST',
-      body: JSON.stringify(info),
-      headers: {
-        'content-type': 'application/json'
-      }
-    }
-
-    fetch(`/api/cart/${this.state.user.id}`, options)
-    .then(resp => {
-      if(!resp.ok) throw new Error('There was an error');
-      return resp.json();
-    })
+    CartServices.Add(info, this.state.user.id)
     .then(respBody => {
       this.updateCart();
     })
   }
 
   deleteFromCart(productId) {
-    fetch(`/api/cart/${this.state.user.id}/${productId}`, {
-      method: 'DELETE'
-    })
-    .then(resp => {
-      if (!resp.ok) throw new Error('There was an error');
-      return resp.json();
-    })
+    CartServices.Delete(this.state.user.id, productId)
     .then(respBody => {
       this.updateCart();
     })
   }
 
   editCart(info) {
-    const options = {
-      method: 'PUT',
-      body: JSON.stringify(info),
-      headers: {
-        'content-type': 'application/json'
-      }
-    }
-
-    fetch(`/api/cart/${this.state.user.id}/${info.product_id}`,
-      options)
-    .then(resp => {
-      if (!resp.ok) throw new Error('There was an error');
-      return resp.json();
-    })
+    CartServices.Edit(info, this.state.user.id)
     .then(respBody => {
       this.updateCart();
     })
