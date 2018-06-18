@@ -1,21 +1,18 @@
 import React, { Component } from 'react';
 import './App.css';
-import { Switch, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import Landing from './components/Landing';
 import Nav from './components/Nav';
-import Categories from './components/categories/Categories';
+import Categories from './components/categories/Routes';
 import Info from './components/info/Routes';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
+import Auth from './components/auth/Routes';
 import Cart from './components/cart/Cart';
 import Sell from './components/profile/Sell';
-import Products from './components/products/Products';
-import ProductsView from './components/products/ProductsView';
 import Footer from './components/Footer';
 import ProductsServices from './services/products';
 import CartServices from './services/cart';
 import Details from './services/details';
-import Auth from './services/auth';
+import Services from './services/auth';
 
 class App extends Component {
   constructor(props) {
@@ -38,14 +35,18 @@ class App extends Component {
     this.handleDelete = this.handleDelete.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
+
     this.handleLogin = this.handleLogin.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
     this.handleRegister = this.handleRegister.bind(this);
+
     this.createProduct = this.createProduct.bind(this);
     this.deleteProduct = this.deleteProduct.bind(this);
     this.updateProduct = this.updateProduct.bind(this);
+
     this.isLoggedIn = this.isLoggedIn.bind(this);
     this.changeErrorStatus = this.changeErrorStatus.bind(this);
+    this.selectCategory = this.selectCategory.bind(this);
   }
 
   // Fetch calls to api
@@ -119,6 +120,11 @@ class App extends Component {
 
   // crud operations
 
+  updateCart() {
+    this.fetchCartItems();
+    this.fetchOrderTotal();
+  }
+
   addToCart(info) {
     CartServices.Add(info, this.state.user.id)
     .then(respBody => {
@@ -174,11 +180,6 @@ class App extends Component {
     })
   }
 
-  updateCart() {
-    this.fetchCartItems();
-    this.fetchOrderTotal();
-  }
-
   // handlers
 
   handleSubmit(info) {
@@ -210,7 +211,7 @@ class App extends Component {
   }
 
   handleLogin(creds) {
-    Auth.login(creds)
+    Services.login(creds)
     .then(user => {
       this.setState({
         user,
@@ -225,7 +226,7 @@ class App extends Component {
   }
 
   handleRegister(creds) {
-    Auth.register(creds)
+    Services.register(creds)
     .then(user => {
       this.setState({
         user,
@@ -238,7 +239,7 @@ class App extends Component {
   }
 
   handleLogout() {
-    Auth.logout();
+    Services.logout();
     this.setState({
       user: null
     })
@@ -246,7 +247,7 @@ class App extends Component {
   }
 
   isLoggedIn() {
-    Auth.checkToken()
+    Services.checkToken()
     .then(user => {
       this.setState({user});
       this.fetchUserProducts();
@@ -267,7 +268,6 @@ class App extends Component {
     return (
     // each category image will be mapped through to create a individual flex items that link to all products
     // for that specific category
-
       <main>
         <div>
           <main>
@@ -278,64 +278,22 @@ class App extends Component {
                 logout={this.handleLogout}
               />)}
             />
-            <Switch>
-              <Route
-                exact
-                path="/categories"
-                render={() => (
-                  <Categories
-                    categories={this.state.categories}
-                    errorStatus={this.changeErrorStatus}
-                  />
-                )}
-              />
-              <Route
-                exact
-                path="/categories/:activity"
-                render={({ match }) => (
-                  <Products
-                    match={ match }
-                    category={this.selectCategory(match.params.activity)}
-                    products={this.state.products}
-                    view={this.singleView}
-                    errorStatus={this.changeErrorStatus}
-                  />
-                )}
-              />
-              <Route
-                path="/categories/:activity/:id"
-                render={({ match, history }) => (
-                  <ProductsView
-                    match={match}
-                    onSubmit={this.handleSubmit}
-                    history={history}
-                    user={this.state.user}
-                  />
-                )} />
-            </Switch>
-            <Route path="/all" render={({ match }) => (
-              <Products
-                match={ match }
-                viewAll={this.state.products}
-                category={this.state.categories}
-                errorStatus={this.changeErrorStatus}
-              />)}
+            <Categories
+              categories={this.state.categories}
+              errorStatus={this.changeErrorStatus}
+              category={this.selectCategory}
+              products={this.state.products}
+              view={this.singleView}
+              handleSubmit={this.handleSubmit}
+              user={this.state.user}
             />
             <Info errorStatus={this.changeErrorStatus} />
-            <Route path="/login" render={({ history }) => (
-              <Login
-                user={this.state.user}
-                history={history}
-                onSubmit={this.handleLogin}
-                error={this.state.loginError}
-              />)}
-            />
-            <Route path="/register" render={({ history }) => (
-              <Register
-                history={history}
-                onSubmit={this.handleRegister}
-                error={this.state.registerError}
-              />)}
+            <Auth
+              user={this.state.user}
+              handleLogin={this.handleLogin}
+              loginError={this.state.loginError}
+              handleRegister={this.handleRegister}
+              registerError={this.state.registerError}
             />
             <Route
               path="/cart"
@@ -371,7 +329,7 @@ class App extends Component {
             <Route path="/:id" render={() => (<Footer/>)} />
           </main>
         </div>
-        </main>
+      </main>
     );
   }
 }
